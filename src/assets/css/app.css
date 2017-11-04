@@ -1,0 +1,57 @@
+/*===================================================
+Books list*/
+
+.table__overflow {
+    width: 95%;
+    margin: 0 auto;
+}
+.datatable thead th {
+    outline: none;
+}
+table.table tbody td:first-child {
+    padding: 0 0px 0 15px
+}
+table.table tbody td:first-child {
+    width: 1px;
+}
+table.table thead td:not(:nth-child(1)), table.table tbody td:not(:nth-child(1)), table.table thead th:not(:nth-child(1)),
+table.table tbody th:not(:nth-child(1)), table.table thead td:first-child, table.table tbody td:first-child, table.table thead th:first-child,
+table.table tbody th:first-child {
+    padding: 0 15px;
+}
+.datatable.table thead tr th:nth-child(1), table.table tbody .text-xs-right:nth-child(1) {
+    text-align: left !important;
+}
+.datatable.table thead tr th:nth-child(2), table.table tbody .text-xs-right:nth-child(2) {
+    width: 12%;
+    text-align: left !important;
+}
+.datatable.table thead tr th:nth-child(3), table.table tbody .text-xs-right:nth-child(3) {
+    text-align: left !important;
+    width: 13%;
+}
+.datatable.table thead tr th:nth-child(4), table.table tbody .text-xs-right:nth-child(4) {
+    padding: 0 5px;
+    text-align: center !important;
+    width: 0 !important;
+}
+.datatable.table thead tr th:nth-child(5), table.table tbody .text-xs-right:nth-child(5) {
+    padding: 0 5px;
+    text-align: left !important;
+    width: 0 !important;
+}
+.datatable.table thead tr th:nth-child(6), table.table tbody .text-xs-right:nth-child(6) {
+    padding: 0 5px;
+    text-align: left !important;
+    width: 0 !important;
+}
+.datatable.table thead tr th:nth-child(7), table.table tbody .text-xs-right:nth-child(7) {
+    padding: 0 5px;
+    text-align: center !important;
+    width: 0 !important;
+}
+.datatable.table thead tr th:nth-child(8), table.table tbody .text-xs-right:nth-child(8) {
+    padding: 0 5px;
+    text-align: center !important;
+    width: 0 !important;
+}

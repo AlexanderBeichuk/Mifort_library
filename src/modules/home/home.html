@@ -1,0 +1,20 @@
+<div id="home">
+    <h2>Mifort library</h2>
+    <h3>Books</h3>
+    <v-data-table :headers="headers" :items="books" hide-actions class="elevation-1">
+        <template slot="items" scope="props">
+            <td class="text-xs-right">
+                <v-avatar :tile="true" size="36px" class="grey lighten-4">
+                    <img :src="props.item.image" alt="avatar">
+                </v-avatar>
+            </td>
+            <td class="text-xs-right">{{ props.item.title }}</td>
+            <td class="text-xs-right">{{ props.item.author }}</td>
+            <td class="text-xs-right">{{ props.item.stars }}</td>
+            <td class="text-xs-right">{{ props.item.location }}</td>
+            <td class="text-xs-right">{{ props.item.count }}</td>
+            <td class="text-xs-right">{{ props.item.description }}</td>
+            <td class="text-xs-right">{{ props.item.status }}</td>
+        </template>
+    </v-data-table>
+</div>
