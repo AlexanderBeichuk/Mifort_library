@@ -1,20 +1,138 @@
 <div id="home">
-    <h2>Mifort library</h2>
-    <h3>Books</h3>
+    <div class="header">
+        <h2>MIFORT LIBRARY</h2>
+        <div class="add-book">
+            <button>ADD BOOK</button>
+        </div>
+        <div class="group">
+            <input class="inputMaterial" type="text" required="" v-model="search" maxlength="132">
+            <span class="highlight"></span>
+            <span class="bar"></span>
+            <label>Search</label>
+        </div>
+    </div>
     <v-data-table :headers="headers" :items="books" hide-actions class="elevation-1">
         <template slot="items" scope="props">
             <td class="text-xs-right">
-                <v-avatar :tile="true" size="36px" class="grey lighten-4">
+                <v-avatar :tile="true" size="50px" class="grey lighten-4">
                     <img :src="props.item.image" alt="avatar">
                 </v-avatar>
             </td>
-            <td class="text-xs-right">{{ props.item.title }}</td>
-            <td class="text-xs-right">{{ props.item.author }}</td>
-            <td class="text-xs-right">{{ props.item.stars }}</td>
+            <td class="text-xs-right">
+                <v-badge color="light-blue" v-model="show" class="title-book">
+                    <span slot="badge">{{ props.item.count }}</span>
+                    <p>{{ props.item.title }}</p>
+                </v-badge>
+            </td>
+            <td class="text-xs-right">
+                {{ props.item.author }}
+            </td>
+            <td class="text-xs-right">
+                <star-rating :rating="props.item.stars" star-size="25" read-only="true"></star-rating>
+            </td>
             <td class="text-xs-right">{{ props.item.location }}</td>
-            <td class="text-xs-right">{{ props.item.count }}</td>
-            <td class="text-xs-right">{{ props.item.description }}</td>
-            <td class="text-xs-right">{{ props.item.status }}</td>
+            <td class="text-xs-right">
+                {{ props.item.status }}
+            </td>
+            <td class="text-xs-right">
+                <button class="open-book" @click.stop="bookOpenPopup = true">
+                    <v-icon>mdi-open-in-new</v-icon>
+                </button>
+                <button class="remove-book" @click.stop="bookDeletePopup = true">
+                    <v-icon>mdi-delete</v-icon>
+                </button>
+            </td>
         </template>
     </v-data-table>
+    <v-dialog v-model="bookOpenPopup" fullscreen transition="dialog-bottom-transition" :overlay=false scrollable>
+        <v-card>
+            <v-toolbar style="flex: 0 0 auto;" dark class="primary">
+                <v-btn icon @click.native="bookOpenPopup = false" dark>
+                    <v-icon>close</v-icon>
+                </v-btn>
+                <v-toolbar-title>Settings</v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-toolbar-items>
+                    <v-btn dark flat @click.native="bookOpenPopup = false">Save</v-btn>
+                    <v-menu bottom right offset-y>
+                        <v-btn slot="activator" dark icon>
+                            <v-icon>more_vert</v-icon>
+                        </v-btn>
+                        <v-list>
+                            <v-list-tile v-for="item in items" :key="item.title" @click="">
+                                <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                            </v-list-tile>
+                        </v-list>
+                    </v-menu>
+                </v-toolbar-items>
+            </v-toolbar>
+            <v-card-text>
+                <v-btn color="primary" dark @click.stop="dialog2 = !dialog2">Open Dialog 2</v-btn>
+                <v-tooltip right>
+                    <v-btn slot="activator">Tool Tip Activator</v-btn>
+                    Tool Tip
+                </v-tooltip>
+                <v-list three-line subheader>
+                    <v-subheader>User Controls</v-subheader>
+                    <v-list-tile avatar>
+                        <v-list-tile-content>
+                            <v-list-tile-title>Content filtering</v-list-tile-title>
+                            <v-list-tile-sub-title>Set the content filtering level to restrict appts that can be downloaded</v-list-tile-sub-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile avatar>
+                        <v-list-tile-content>
+                            <v-list-tile-title>Password</v-list-tile-title>
+                            <v-list-tile-sub-title>Require password for purchase or use password to restrict purchase</v-list-tile-sub-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list>
+                <v-divider></v-divider>
+                <v-list three-line subheader>
+                    <v-subheader>General</v-subheader>
+                    <v-list-tile avatar>
+                        <v-list-tile-action>
+                            <v-checkbox v-model="notifications"></v-checkbox>
+                        </v-list-tile-action>
+                        <v-list-tile-content>
+                            <v-list-tile-title>Notifications</v-list-tile-title>
+                            <v-list-tile-sub-title>Notify me about updates to apps or games that I downloaded</v-list-tile-sub-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile avatar>
+                        <v-list-tile-action>
+                            <v-checkbox v-model="sound"></v-checkbox>
+                        </v-list-tile-action>
+                        <v-list-tile-content>
+                            <v-list-tile-title>Sound</v-list-tile-title>
+                            <v-list-tile-sub-title>Auto-update apps at any time. Data charges may apply</v-list-tile-sub-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile avatar>
+                        <v-list-tile-action>
+                            <v-checkbox v-model="widgets"></v-checkbox>
+                        </v-list-tile-action>
+                        <v-list-tile-content>
+                            <v-list-tile-title>Auto-add widgets</v-list-tile-title>
+                            <v-list-tile-sub-title>Automatically add home screen widgets</v-list-tile-sub-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list>
+            </v-card-text>
+            <div style="flex: 1 1 auto;"></div>
+        </v-card>
+    </v-dialog>
+    <v-dialog v-model="bookDeletePopup">
+        <v-card>
+            <v-card-title class="headline">Use Google's location service?</v-card-title>
+            <v-card-text>Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.</v-card-text>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="green darken-1" flat="flat" @click.native="bookDeletePopup = false">Disagree</v-btn>
+                <v-btn color="green darken-1" flat="flat" @click.native="bookDeletePopup = false">Agree</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+        </v-card>
+    </v-dialog>
 </div>
