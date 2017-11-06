@@ -6,8 +6,28 @@ export default {
             headers: headersArr,
             books: booksArr,
             bookOpenPopup: false,
-            bookDeletePopup: false
+            bookDeletePopup: false,
+            bookCreatePopup: false,
+            bookSetStatusPopup: false,
+            bookCommentPopup: false,
+            currentBook: {},
+            commentFast: '',
+            statuses: statusesArr,
+
         }
+    },
+    methods: {
+        // changeStatus: function () {
+        //     console.log(this.statusss.status.text);
+        // }
+        openPopup: function (book) {
+            this.comment = '';
+            this.currentBook = book;
+        },
+        addComment: function (book, comment, user) {
+
+        }
+
     }
 }
 
@@ -45,7 +65,7 @@ var tilesArr = [
             image: '../../assets/images/logo.png',
             title: 'Starik Hotabich',
             author: 'Stiven King',
-            stars: 4.5,
+            stars: 3,
             description: 'description_1',
             location: 'Serdicha str. 6',
             count: 3,
@@ -144,16 +164,15 @@ var tilesArr = [
         { text: '', value: 'image', sortable: false},
         { text: 'Title', value: 'title'},
         { text: 'Author', value: 'author'},
-        { text: 'Stars', align: 'center', value: 'stars'},
+        // { text: 'Stars', align: 'center', value: 'stars'},
         { text: 'Location', value: 'location' },
         { text: 'Status', align: 'center', value: 'status' },
-        { text: '', value: 'actions', sortable: false },
-
+        { text: '', value: 'actions', sortable: false }
     ],
     statusesArr = [
-        {status: '111'},
-        {status: '222'},
-        {status: '333'},
-        {status: '444'},
-        {status: 'Want'},
-    ]
+        {text: '111'},
+        {text: '222'},
+        {text: '333'},
+        {text: '444'},
+        {text: 'Want'},
+    ];

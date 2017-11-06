@@ -2,48 +2,78 @@
     <div class="header">
         <h2>MIFORT LIBRARY</h2>
         <div class="add-book">
-            <button>ADD BOOK</button>
+            <button @click.stop="bookCreatePopup = true" @click="openPopup({})">ADD BOOK</button>
         </div>
-        <div class="group">
-            <input class="inputMaterial" type="text" required="" v-model="search" maxlength="132">
-            <span class="highlight"></span>
-            <span class="bar"></span>
-            <label>Search</label>
-        </div>
+        <v-text-field append-icon="search" label="Search" single-line hide-details v-model="search" class="search-books"></v-text-field>
     </div>
-    <v-data-table :headers="headers" :items="books" hide-actions class="elevation-1">
+    <v-data-table :headers="headers" :items="books" :search="search" hide-actions class="elevation-1">
         <template slot="items" scope="props">
             <td class="text-xs-right">
-                <v-avatar :tile="true" size="50px" class="grey lighten-4">
-                    <img :src="props.item.image" alt="avatar">
+                <v-avatar :tile="true" size="50px" class="grey lighten-4 img-book">
+                    <img :src="props.item.image" alt="img">
                 </v-avatar>
+                <v-icon class="star" v-if="props.item.stars >= 4">mdi-star</v-icon>
             </td>
             <td class="text-xs-right">
-                <v-badge color="light-blue" v-model="show" class="title-book">
-                    <span slot="badge">{{ props.item.count }}</span>
-                    <p>{{ props.item.title }}</p>
-                </v-badge>
+                {{ props.item.title }}
             </td>
             <td class="text-xs-right">
                 {{ props.item.author }}
             </td>
-            <td class="text-xs-right">
-                <star-rating :rating="props.item.stars" star-size="25" read-only="true"></star-rating>
-            </td>
+            <!--<td class="text-xs-right">-->
+                <!--<star-rating :rating="props.item.stars" star-size="25" read-only="true"></star-rating>-->
+            <!--</td>-->
             <td class="text-xs-right">{{ props.item.location }}</td>
             <td class="text-xs-right">
-                {{ props.item.status }}
+                <!--<span slot="badge"> {{ props.item.count }}</span>-->
+                <!--<md-input-container class="status-select">-->
+                    <!--<label for="status">Status</label>-->
+                    <!--<md-select name="status" id="status" v-model="statusss" @change="changeStatus">-->
+                        <!--<md-option v-for="status in statuses" :value="{status}">{{status.text}}</md-option>-->
+                    <!--</md-select>-->
+                <!--</md-input-container>-->
+                <button @click.stop="bookSetStatusPopup = true" @click="openPopup(props.item)" class="status-book-btn">{{props.item.status}}</button>
+                <span class="badge">{{props.item.count}}</span>
             </td>
             <td class="text-xs-right">
-                <button class="open-book" @click.stop="bookOpenPopup = true">
-                    <v-icon>mdi-open-in-new</v-icon>
+                <button @click.stop="bookCommentPopup = true" @click="openPopup(props.item)">
+                    <v-icon>mdi-comment-text-outline</v-icon>
+                    <md-tooltip md-direction="top">Add comment</md-tooltip>
                 </button>
-                <button class="remove-book" @click.stop="bookDeletePopup = true">
+                <button @click.stop="bookOpenPopup = true" @click="openPopup(props.item)">
+                    <v-icon>mdi-open-in-new</v-icon>
+                    <md-tooltip md-direction="top">Open book</md-tooltip>
+                </button>
+                <button @click.stop="bookDeletePopup = true" @click="openPopup(props.item)">
                     <v-icon>mdi-delete</v-icon>
+                    <md-tooltip md-direction="top">Delete book</md-tooltip>
                 </button>
             </td>
         </template>
     </v-data-table>
+    <v-dialog v-model="bookCommentPopup" class="comment-popup">
+        <v-card>
+            <v-card-title class="headline">
+                <v-avatar :tile="true" size="50px" class="grey lighten-4 img-book">
+                    <img :src="currentBook.image" alt="img">
+                </v-avatar>
+                <v-icon class="star" v-if="currentBook.stars >= 4">mdi-star</v-icon>
+                <span class="title">{{currentBook.title}}</span>
+                <span class="author">{{currentBook.author}}</span>
+            </v-card-title>
+            <v-card-text>
+                <md-input-container>
+                    <label>Comment</label>
+                    <md-textarea v-model="comment" maxlength="500" autofocus></md-textarea>
+                </md-input-container>
+            </v-card-text>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="green darken-1" flat="flat" @click.native="bookCommentPopup = false">Comment</v-btn>
+                <v-btn color="green darken-1" flat="flat" @click.native="bookCommentPopup = false">Cancel</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
     <v-dialog v-model="bookOpenPopup" fullscreen transition="dialog-bottom-transition" :overlay=false scrollable>
         <v-card>
             <v-toolbar style="flex: 0 0 auto;" dark class="primary">
@@ -133,6 +163,30 @@
             </v-card-actions>
         </v-card>
     </v-dialog>
+    <v-dialog v-model="bookCreatePopup">
+        <v-card>
+            <v-card-title class="headline">bookCreatePopup</v-card-title>
+            <v-card-text>Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.</v-card-text>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="green darken-1" flat="flat" @click.native="bookCreatePopup = false">Disagree</v-btn>
+                <v-btn color="green darken-1" flat="flat" @click.native="bookCreatePopup = false">Agree</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+    <v-dialog v-model="bookSetStatusPopup">
+        <v-card>
+            <v-card-title class="headline">Status</v-card-title>
+            <v-card-text>
+                <v-btn color="green darken-1" @click.native="bookSetStatusPopup = false">1231123</v-btn>
+                <v-btn color="green darken-1" @click.native="bookSetStatusPopup = false">1231123</v-btn>
+                <v-btn color="green darken-1" @click.native="bookSetStatusPopup = false">1231123</v-btn>
+            </v-card-text>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="green darken-1" flat="flat" @click.native="bookSetStatusPopup = false">Disagree</v-btn>
+                <v-btn color="green darken-1" flat="flat" @click.native="bookSetStatusPopup = false">Agree</v-btn>
+            </v-card-actions>
         </v-card>
     </v-dialog>
 </div>
