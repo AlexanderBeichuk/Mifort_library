@@ -145,6 +145,14 @@ table.table tbody .text-xs-right:nth-child(6) button:hover {
     margin: -9px 0 0 -12px;
     color: #ffbd00;
 }
+.description {
+    position: absolute;
+    margin: 35px 0 0 -13px;
+    transition: .1s;
+}
+.description:hover {
+    color: #4ccff5;
+}
 .table.table tbody .text-xs-right:nth-child(2) {
     margin: 20px 12px 10px 0;
     max-width: 75px;
@@ -218,4 +226,18 @@ table.table tbody .text-xs-right:nth-child(5) button:hover {
 }
 .comment-popup .card__text {
     height: auto;
+}
+.description-popup .dialog {
+    overflow-y: hidden;
+}
+.description-popup .card__text {
+    overflow-y: scroll;
+    max-height: 565px;
+}
+.description-popup .dialog:not(.dialog--fullscreen) {
+    max-height: none;
+}
+.delete-popup .card__text {
+    text-align: center;
+    font-size: 18px;
 }

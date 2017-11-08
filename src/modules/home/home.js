@@ -2,16 +2,15 @@ export default {
     name: 'home',
     data () {
         return {
-            search: '',
             headers: headersArr,
             books: booksArr,
             bookOpenPopup: false,
+            bookDescriptionPopup: false,
             bookDeletePopup: false,
             bookCreatePopup: false,
             bookSetStatusPopup: false,
             bookCommentPopup: false,
             currentBook: {},
-            commentFast: '',
             statuses: statusesArr,
 
         }
@@ -22,6 +21,7 @@ export default {
         // }
         openPopup: function (book) {
             this.comment = '';
+            this.stars = book.stars;
             this.currentBook = book;
         },
         addComment: function (book, comment, user) {
