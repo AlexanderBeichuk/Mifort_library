@@ -4,15 +4,18 @@ export default {
         return {
             headers: headersArr,
             books: booksArr,
+            search: null,
             bookOpenPopup: false,
             bookDescriptionPopup: false,
+            fastComment: null,
             bookDeletePopup: false,
             bookCreatePopup: false,
             bookSetStatusPopup: false,
             bookCommentPopup: false,
             currentBook: {},
             statuses: statusesArr,
-
+            ab: {},
+            showComments: false
         }
     },
     methods: {
@@ -20,14 +23,13 @@ export default {
         //     console.log(this.statusss.status.text);
         // }
         openPopup: function (book) {
-            this.comment = '';
+            this.fastComment = null;
             this.stars = book.stars;
             this.currentBook = book;
         },
         addComment: function (book, comment, user) {
 
         }
-
     }
 }
 
@@ -52,13 +54,13 @@ var tilesArr = [
         {
             value: false,
             image: 'https://vuetifyjs.com/static/apple-touch-icon-180x180.png',
-            title: 'JavaScript it\'s easy',
-            author: 'Alexander Beichuk',
+            title: 'JavaScript it\'s easyffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+            author: 'Alexander Beichukjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjffffffffffffffffffffffffffff',
             stars: 4,
             description: 'description_1',
             location: 'office_1',
             count: 3,
-            status: 'want',
+            status: 'Want',
         },
         {
             value: false,
@@ -69,7 +71,7 @@ var tilesArr = [
             description: 'description_1',
             location: 'Serdicha str. 6',
             count: 3,
-            status: 'Zabronirovat\'',
+            status: 'Want',
         },
         {
             value: false,
@@ -80,7 +82,7 @@ var tilesArr = [
             description: 'description_1',
             location: 'office_1',
             count: 3,
-            status: 'want',
+            status: 'Want',
         },
         {
             value: false,
@@ -91,7 +93,7 @@ var tilesArr = [
             description: 'description_1',
             location: 'office_1',
             count: 3,
-            status: 'want',
+            status: 'Want',
         },
         {
             value: false,
@@ -102,7 +104,7 @@ var tilesArr = [
             description: 'description_1',
             location: 'office_1',
             count: 3,
-            status: 'want',
+            status: 'Want',
         },
         {
             value: false,
@@ -113,7 +115,7 @@ var tilesArr = [
             description: 'description_1',
             location: 'office_1',
             count: 3,
-            status: 'want',
+            status: 'Want',
         },
         {
             value: false,
@@ -124,7 +126,7 @@ var tilesArr = [
             description: 'description_1',
             location: 'office_1',
             count: 3,
-            status: 'want',
+            status: 'Want',
         },
         {
             value: false,
@@ -135,7 +137,7 @@ var tilesArr = [
             description: 'description_1',
             location: 'office_1',
             count: 3,
-            status: 'want',
+            status: 'Want',
         },
         {
             value: false,
@@ -146,18 +148,18 @@ var tilesArr = [
             description: 'description_1',
             location: 'office_1',
             count: 3,
-            status: 'want',
+            status: 'Want',
         },
         {
             value: false,
             image: '../../assets/logo.png',
-            title: 'Book_1',
+            title: 'Book212_1',
             author: 'Author_1',
             stars: 4.5,
             description: 'description_1',
             location: 'office_1',
             count: 3,
-            status: 'want',
+            status: '111',
         }
     ],
     headersArr = [

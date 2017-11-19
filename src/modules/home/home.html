@@ -56,14 +56,47 @@
         </template>
     </v-data-table>
 
-    <v-dialog v-model="bookCreatePopup">
+    <v-dialog v-model="bookCreatePopup" class="create-book-popup">
         <v-card>
-            <v-card-title class="headline">bookCreatePopup</v-card-title>
-            <v-card-text>Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.</v-card-text>
+            <v-card-title class="headline">Add book</v-card-title>
+            <v-card-text>
+                <md-input-container :class="{ 'required-field': ab.title === null || ab.title === '' }">
+                    <label>Title</label>
+                    <md-input v-model="ab.title" required></md-input>
+                </md-input-container>
+                <span class="error-message" v-if="ab.title === null || ab.title === ''">Title is null</span>
+                <md-input-container :class="{ 'required-field': ab.author === null || ab.author === '' }">
+                    <label>Author</label>
+                    <md-input v-model="ab.author" required></md-input>
+                </md-input-container>
+                <span class="error-message" v-if="ab.author === null || ab.author === ''">Author is null</span>
+                <md-input-container>
+                    <label>Description</label>
+                    <md-textarea class="ab-description-textarea" v-model="ab.description"></md-textarea>
+                </md-input-container>
+                <md-input-container>
+                    <label>Image</label>
+                    <md-file v-model="ab.image" accept="image/*" />
+                </md-input-container>
+                <md-input-container>
+                    <label for="ab.status">Status</label>
+                    <md-select v-model="ab.status" name="ab.status" id="ab.status">
+                        <md-option v-for="status in statuses" :value="status.text">{{status.text}}</md-option>
+                    </md-select>
+                </md-input-container>
+                <md-input-container>
+                    <label>Location</label>
+                    <md-input v-model="ab.location"></md-input>
+                </md-input-container>
+                <md-input-container class="count">
+                    <label>Count</label>
+                    <md-input type="number" v-model="ab.count"></md-input>
+                </md-input-container>
+            </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="green darken-1" flat="flat" @click.native="bookCreatePopup = false">Disagree</v-btn>
-                <v-btn color="green darken-1" flat="flat" @click.native="bookCreatePopup = false">Agree</v-btn>
+                <v-btn color="blue" flat="flat" @click.native="bookCreatePopup = false">Add</v-btn>
+                <v-btn color="blue" flat="flat" @click.native="bookCreatePopup = false">Cancel</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -86,7 +119,7 @@
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="green darken-1" flat="flat" @click="bookDescriptionPopup = false">Close</v-btn>
+                <v-btn color="blue" flat="flat" @click="bookDescriptionPopup = false">Close</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -102,92 +135,170 @@
             </v-card-title>
             <v-card-text>
                 <md-input-container>
-                    <label>Comment</label>
-                    <md-textarea class="comment-textarea" v-model="comment" maxlength="500" autofocus></md-textarea>
-                </md-input-container>
+                <label>Comment</label>
+                <md-textarea class="comment-textarea" v-model="fastComment" maxlength="500" autofocus></md-textarea>
+            </md-input-container>
                 <star-rating :rating="stars" star-size="25"></star-rating>
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="green darken-1" flat="flat" @click.native="bookCommentPopup = false">Comment</v-btn>
-                <v-btn color="green darken-1" flat="flat" @click.native="bookCommentPopup = false">Cancel</v-btn>
+                <v-btn color="blue" flat="flat" @click.native="bookCommentPopup = false">Comment</v-btn>
+                <v-btn color="blue" flat="flat" @click.native="bookCommentPopup = false">Cancel</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
-    <v-dialog v-model="bookOpenPopup" fullscreen transition="dialog-bottom-transition" :overlay=false scrollable>
+    <v-dialog v-model="bookOpenPopup" fullscreen transition="dialog-bottom-transition" class="open-popup" :overlay=false scrollable>
         <v-card>
-            <v-toolbar style="flex: 0 0 auto;" dark class="primary">
-                <v-btn icon @click.native="bookOpenPopup = false" dark>
+            <v-toolbar style="flex: 0 0 auto;" class="primary header">
+                <v-btn icon @click.native="bookOpenPopup = false">
                     <v-icon>close</v-icon>
                 </v-btn>
-                <v-toolbar-title>Settings</v-toolbar-title>
+                <v-toolbar-title>
+                    <span class="title">{{currentBook.title}}</span> <span class="author">{{currentBook.author}}</span>
+                </v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-toolbar-items>
-                    <v-btn dark flat @click.native="bookOpenPopup = false">Save</v-btn>
-                    <v-menu bottom right offset-y>
-                        <v-btn slot="activator" dark icon>
-                            <v-icon>more_vert</v-icon>
-                        </v-btn>
-                        <v-list>
-                            <v-list-tile v-for="item in items" :key="item.title" @click="">
-                                <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-                            </v-list-tile>
-                        </v-list>
-                    </v-menu>
+                    <md-switch v-model="showComments">Show comments</md-switch>
                 </v-toolbar-items>
             </v-toolbar>
             <v-card-text>
-                <v-btn color="primary" dark @click.stop="dialog2 = !dialog2">Open Dialog 2</v-btn>
-                <v-tooltip right>
-                    <v-btn slot="activator">Tool Tip Activator</v-btn>
-                    Tool Tip
-                </v-tooltip>
-                <v-list three-line subheader>
-                    <v-subheader>User Controls</v-subheader>
-                    <v-list-tile avatar>
-                        <v-list-tile-content>
-                            <v-list-tile-title>Content filtering</v-list-tile-title>
-                            <v-list-tile-sub-title>Set the content filtering level to restrict appts that can be downloaded</v-list-tile-sub-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-                    <v-list-tile avatar>
-                        <v-list-tile-content>
-                            <v-list-tile-title>Password</v-list-tile-title>
-                            <v-list-tile-sub-title>Require password for purchase or use password to restrict purchase</v-list-tile-sub-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-                </v-list>
-                <v-divider></v-divider>
-                <v-list three-line subheader>
-                    <v-subheader>General</v-subheader>
-                    <v-list-tile avatar>
-                        <v-list-tile-action>
-                            <v-checkbox v-model="notifications"></v-checkbox>
-                        </v-list-tile-action>
-                        <v-list-tile-content>
-                            <v-list-tile-title>Notifications</v-list-tile-title>
-                            <v-list-tile-sub-title>Notify me about updates to apps or games that I downloaded</v-list-tile-sub-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-                    <v-list-tile avatar>
-                        <v-list-tile-action>
-                            <v-checkbox v-model="sound"></v-checkbox>
-                        </v-list-tile-action>
-                        <v-list-tile-content>
-                            <v-list-tile-title>Sound</v-list-tile-title>
-                            <v-list-tile-sub-title>Auto-update apps at any time. Data charges may apply</v-list-tile-sub-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-                    <v-list-tile avatar>
-                        <v-list-tile-action>
-                            <v-checkbox v-model="widgets"></v-checkbox>
-                        </v-list-tile-action>
-                        <v-list-tile-content>
-                            <v-list-tile-title>Auto-add widgets</v-list-tile-title>
-                            <v-list-tile-sub-title>Automatically add home screen widgets</v-list-tile-sub-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-                </v-list>
+                <div class="info" :class="{'info-max-width': showComments === false}">
+                    <md-input-container :class="{ 'required-field': currentBook.title === null || currentBook.title === '' }">
+                        <label>Title</label>
+                        <md-input v-model="currentBook.title" required></md-input>
+                    </md-input-container>
+                    <span class="error-message" v-if="currentBook.title === null || currentBook.title === ''">Title is null</span>
+                    <md-input-container :class="{ 'required-field': currentBook.author === null || currentBook.author === '' }">
+                    <label>Author</label>
+                        <md-input v-model="currentBook.author" required></md-input>
+                    </md-input-container>
+                    <span class="error-message" v-if="currentBook.author === null || currentBook.author === ''">Author is null</span>
+                    <md-input-container>
+                        <label>Description</label>
+                        <md-textarea v-model="currentBook.description"></md-textarea>
+                        <button class="btn-descrition" @click.stop="bookDescriptionPopup = true" @click="openPopup(currentBook)">
+                            <v-icon>mdi-dots-horizontal-circle</v-icon>
+                            <md-tooltip md-direction="right">Description</md-tooltip>
+                        </button>
+                    </md-input-container>
+                    <md-input-container>
+                        <label>Image</label>
+                        <md-file v-model="currentBook.image" accept="image/*" />
+                    </md-input-container>
+                    <md-input-container>
+                        <label for="currentBook.status">Status</label>
+                        <md-select v-model="currentBook.status" name="currentBook.status" id="currentBook.status">
+                            <md-option v-for="status in statuses" :value="status.text">{{status.text}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container>
+                        <label>Location</label>
+                        <md-input v-model="currentBook.location"></md-input>
+                    </md-input-container>
+                    <md-input-container class="count">
+                        <label>Count</label>
+                        <md-input type="number" v-model="currentBook.count"></md-input>
+                    </md-input-container>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="blue" flat="flat" @click.native="">
+                            SAVE
+                        </v-btn>
+                        <v-btn color="blue" flat="flat" @click.native="">
+                            CANCEL
+                        </v-btn>
+                    </v-card-actions>
+                </div>
+                <div v-if="showComments" class="comments">
+                    <div class="area">
+                        <div class="comment">
+                            <v-avatar :tile="false" size="50px" class="grey lighten-4">
+                                <img src="../../assets/images/tusk.jpg" alt="Avatar">
+                            </v-avatar>
+                            <div class="triangle-left"></div>
+                            <div class="content">
+                                <p class="name">Alex Beichuk <span class="date">12/12/2012</span></p>
+                                <p class="description">dfsdsfdsfks s aaaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaafsfsd sdkfdsf sdfk sfk sfsdfsdfsf dskfdsfsf sfksdfsdfsd fdsfdsfsdfsdfsd sdfdsfsd sdf</p>
+                            </div>
+                        </div>
+                        <div class="comment">
+                            <v-avatar :tile="false" size="50px" class="grey lighten-4">
+                                <img src="../../assets/images/tusk.jpg" alt="Avatar">
+                            </v-avatar>
+                            <div class="triangle-left"></div>
+                            <div class="content">
+                                <p class="name">Alex Beichuk <span class="date">12/12/2012</span></p>
+                                <p class="description">dfsdsfdsfks s aaaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaafsfsd sdkfdsf sdfk sfk sfsdfsdfsf dskfdsfsf sfksdfsdfsd fdsfdsfsdfsdfsd sdfdsfsd sdf</p>
+                            </div>
+                        </div>
+                        <div class="comment">
+                            <v-avatar :tile="false" size="50px" class="grey lighten-4">
+                                <img src="../../assets/images/tusk.jpg" alt="Avatar">
+                            </v-avatar>
+                            <div class="triangle-left"></div>
+                            <div class="content">
+                                <p class="name">Alex Beichuk <span class="date">12/12/2012</span></p>
+                                <p class="description">dfsdsfdsfks s aaaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaafsfsd sdkfdsf sdfk sfk sfsdfsdfsf dskfdsfsf sfksdfsdfsd fdsfdsfsdfsdfsd sdfdsfsd sdf</p>
+                            </div>
+                        </div>
+                        <div class="comment">
+                            <v-avatar :tile="false" size="50px" class="grey lighten-4">
+                                <img src="../../assets/images/tusk.jpg" alt="Avatar">
+                            </v-avatar>
+                            <div class="triangle-left"></div>
+                            <div class="content">
+                                <p class="name">Alex Beichuk <span class="date">12/12/2012</span></p>
+                                <p class="description">dfsdsfdsfks s aaaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaafsfsd sdkfdsf sdfk sfk sfsdfsdfsf dskfdsfsf sfksdfsdfsd fdsfdsfsdfsdfsd sdfdsfsd sdf</p>
+                            </div>
+                        </div>
+                        <div class="comment">
+                            <v-avatar :tile="false" size="50px" class="grey lighten-4">
+                                <img src="../../assets/images/tusk.jpg" alt="Avatar">
+                            </v-avatar>
+                            <div class="triangle-left"></div>
+                            <div class="content">
+                                <p class="name">Alex Beichuk <span class="date">12/12/2012</span></p>
+                                <p class="description">dfsdsfdsfks s aaaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaafsfsd sdkfdsf sdfk sfk sfsdfsdfsf dskfdsfsf sfksdfsdfsd fdsfdsfsdfsdfsd sdfdsfsd sdf</p>
+                            </div>
+                        </div>
+                        <div class="comment">
+                            <v-avatar :tile="false" size="50px" class="grey lighten-4">
+                                <img src="../../assets/images/tusk.jpg" alt="Avatar">
+                            </v-avatar>
+                            <div class="triangle-left"></div>
+                            <div class="content">
+                                <p class="name">Alex Beichuk <span class="date">12/12/2012</span></p>
+                                <p class="description">dfsdsfdsfks s aaaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaafsfsd sdkfdsf sdfk sfk sfsdfsdfsf dskfdsfsf sfksdfsdfsd fdsfdsfsdfsdfsd sdfdsfsd sdf</p>
+                            </div>
+                        </div>
+                        <div class="comment">
+                            <v-avatar :tile="false" size="50px" class="grey lighten-4">
+                                <img src="../../assets/images/tusk.jpg" alt="Avatar">
+                            </v-avatar>
+                            <div class="triangle-left"></div>
+                            <div class="content">
+                                <p class="name">Alex Beichuk <span class="date">12/12/2012</span></p>
+                                <p class="description">dfsdsfdsfks s aaaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaafsfsd sdkfdsf sdfk sfk sfsdfsdfsf dskfdsfsf sfksdfsdfsd fdsfdsfsdfsdfsd sdfdsfsd sdf</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="add-comment">
+                        <v-avatar :tile="false" size="30px" class="grey lighten-4 avatar">
+                            <img src="../../assets/images/tusk.jpg" alt="Avatar">
+                        </v-avatar>
+                        <md-input-container class="comment-input">
+                            <label>Comment</label>
+                            <md-textarea v-model="currentBook.comment"></md-textarea>
+                        </md-input-container>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <star-rating class="stars" :rating="stars" star-size="20"></star-rating>
+                            <v-btn color="blue" flat="flat" class="send" @click.native="">
+                                <v-icon>mdi-send</v-icon>
+                            </v-btn>
+                        </v-card-actions>
+                    </div>
+                </div>
             </v-card-text>
             <div style="flex: 1 1 auto;"></div>
         </v-card>
@@ -198,23 +309,23 @@
             <v-card-text>Are you sure?</v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="green darken-1" flat="flat" @click.native="bookDeletePopup = false">Delete</v-btn>
-                <v-btn color="green darken-1" flat="flat" @click.native="bookDeletePopup = false">Cancel</v-btn>
+                <v-btn color="blue" flat="flat" @click.native="bookDeletePopup = false">Delete</v-btn>
+                <v-btn color="blue" flat="flat" @click.native="bookDeletePopup = false">Cancel</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
-    <v-dialog v-model="bookSetStatusPopup">
+    <v-dialog v-model="bookSetStatusPopup" class="set-status-popup">
         <v-card>
             <v-card-title class="headline">Status</v-card-title>
-            <v-card-text>
-                <v-btn color="green darken-1" @click.native="bookSetStatusPopup = false">1231123</v-btn>
-                <v-btn color="green darken-1" @click.native="bookSetStatusPopup = false">1231123</v-btn>
-                <v-btn color="green darken-1" @click.native="bookSetStatusPopup = false">1231123</v-btn>
+            <v-card-text class="statuses">
+                <v-btn color="blue" class="status" @click.native="bookSetStatusPopup = false">WANT</v-btn>
+                <v-btn color="blue" class="status" @click.native="bookSetStatusPopup = false">IN SUCCESS</v-btn>
+                <v-btn color="blue" class="status" @click.native="bookSetStatusPopup = false">ON HANDS</v-btn>
+                <v-btn color="blue" class="status" @click.native="bookSetStatusPopup = false">WAIT</v-btn>
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="green darken-1" flat="flat" @click.native="bookSetStatusPopup = false">Disagree</v-btn>
-                <v-btn color="green darken-1" flat="flat" @click.native="bookSetStatusPopup = false">Agree</v-btn>
+                <v-btn color="blue" flat="flat" @click.native="bookSetStatusPopup = false">Cancel</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
